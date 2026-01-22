@@ -1,0 +1,17 @@
+#cloud-config
+users:
+  - name: ubuntu
+    groups: sudo
+    shell: /bin/bash
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    ssh_authorized_keys:
+      - ${ssh_key}
+
+package_update: true
+packages:
+  - nginx
+
+runcmd:
+  - sudo systemctl enable nginx || true
+  - sudo systemctl restart nginx || (echo "Nginx failed to start" && exit 1)
+  - sudo nginx -t && echo "Nginx config OK" || (echo "Nginx config FAILED" && exit 1)
